@@ -12,23 +12,28 @@ struct bits8 { //data structure of 8 bits
   struct bit b7; // Most significant bit
 };
 
-struct bits8 bits8_from_int(unsigned int x) { // return type must be bits8, x is expected to be unsigned(positive)
+
+//developed using chatgbt as allowed in the course
+//No loops  :(
+struct bits8 bits8_from_int(unsigned int x) {// return type must be bits8, x is expected to be unsigned(positive)
     struct bits8 result;
-    result.b0 = bit_from_int(x & 1); // Extract least significant bit
-    result.b1 = bit_from_int((x >> 1) & 1); // Extract next bit
-    result.b2 = bit_from_int((x >> 2) & 1);
+    result.b0 = bit_from_int(x & 1);// Extract least significant bit
+    result.b1 = bit_from_int((x >> 1) & 1);// Extract next bit by shifting
+    result.b2 = bit_from_int((x >> 2) & 1);//...
     result.b3 = bit_from_int((x >> 3) & 1);
     result.b4 = bit_from_int((x >> 4) & 1);
     result.b5 = bit_from_int((x >> 5) & 1);
     result.b6 = bit_from_int((x >> 6) & 1);
-    result.b7 = bit_from_int((x >> 7) & 1); // Extract most significant bit
+    result.b7 = bit_from_int((x >> 7) & 1);// Extract most significant bit
     return result;
 }
 
+
+//developed using chatgbt as allowed in the course
 unsigned int bits8_to_int(struct bits8 x) {
-    return bit_to_int(x.b0) |
-           (bit_to_int(x.b1) << 1) |
-           (bit_to_int(x.b2) << 2) |
+    return bit_to_int(x.b0) | //extracts the bit
+           (bit_to_int(x.b1) << 1) |// bit shifting moves each bit to the correct position
+           (bit_to_int(x.b2) << 2) |// its all combined using the Or operator
            (bit_to_int(x.b3) << 3) |
            (bit_to_int(x.b4) << 4) |
            (bit_to_int(x.b5) << 5) |
@@ -36,7 +41,9 @@ unsigned int bits8_to_int(struct bits8 x) {
            (bit_to_int(x.b7) << 7);
 }
 
-void bits8_print(struct bits8 v) {
+
+//developed using chatgbt as allowed in the course
+void bits8_print(struct bits8 v) {// prints each bit...
     printf("%d", bit_to_int(v.b7));
     printf("%d", bit_to_int(v.b6));
     printf("%d", bit_to_int(v.b5));
@@ -48,20 +55,26 @@ void bits8_print(struct bits8 v) {
 }
 
 
+
+//developed using chatgbt as allowed in the course
 struct add_result {
     struct bit s; 
     struct bit c; 
 };
 
+
+//developed using chatgbt as allowed in the course
 struct add_result bit_add(struct bit x, struct bit y, struct bit c_in){
     struct add_result result;
-    result.s = bit_xor(bit_xor(x, y), c_in); // s = x ⊕ y ⊕ c_in
+    result.s = bit_xor(bit_xor(x, y), c_in); //s = x ⊕ y ⊕ c_in
     struct bit carry1 = bit_and(x,y); // Carry from x and y
     struct  bit carry2 = bit_and(bit_or(x,y),c_in); // Carry from (x ⊕ y) and c_in
     result.c = bit_or(carry1,carry2); // c_out = (x and y) or ((x or y) and c_in)
     return result;
 }
 
+
+//developed using chatgbt as allowed in the course
 struct bits8 bits8_add(struct bits8 x, struct bits8 y) {
   
     struct bits8 result;
@@ -105,6 +118,8 @@ struct bits8 bits8_add(struct bits8 x, struct bits8 y) {
     
 }
 
+
+//developed using chatgbt as allowed in the course
 struct bits8 bits8_negate(struct bits8 x) {
     // Step 1: Invert all bits
     struct bits8 inverted;
@@ -125,7 +140,7 @@ struct bits8 bits8_negate(struct bits8 x) {
 }
 
 
-
+//developed using chatgbt as allowed in the course
 struct bits8 bits8_mul(struct bits8 x, struct bits8 y) {
     struct bits8 result = bits8_from_int(0); // Initialize result to 0
     struct bits8 shifted = x;
