@@ -45,12 +45,11 @@ int read_uint_ascii(FILE *f, uint32_t *out) {
   }
 }
 
-int read_double_ascii(FILE *f, double *out) {
-    // Skip whitespace
-    skipspaces(f);
+int read_double_ascii(FILE *f, double *out) {//*f is a pointer to the file we wish to read from, *out is a pointer to the double variable, where the function will store the read double
+    skipspaces(f); // Skips whitespace
 
     // Attempt to read a double using fscanf
-    int result = fscanf(f, "%lf", out);
+    int result = fscanf(f, "%lf", out);// reads input from the file f, %lf:only reads doubles, out is a pinter to where the location where the read double will be stored
 
     if (result == EOF) {
         return EOF; // End of file
@@ -110,12 +109,12 @@ int read_uint_be(FILE *f, uint32_t *out) {
 }
 
 
-int read_double_bin(FILE *f, double *out) {
+int read_double_bin(FILE *f, double *out) {// f is a pointer to the file to read from, out is a pointer to the address where we will store the read value
     // Attempt to read 8 bytes into the output double
-    if (fread(out, sizeof(double), 1, f) != 1) {
-        return (feof(f) ? EOF : 1); // EOF or incomplete read
+    if (fread(out, sizeof(double), 1, f) != 1) { // out:stored data, sizeof(double): size of each element in bytes(8), 1: count of elements to be read, f: pointer to files stream, fread returns the number of elements succesfully read. If it doesnt read 1 it 
+        return (feof(f) ? EOF : 1); // feof checks if end of file has been reached in which case it returns EOF, if not 1 is returned indicating some error.
     }
-    return 0; // Success
+    return 0; // return 0 for success
 }
 
 int write_uint_ascii(FILE *f, uint32_t x) {
@@ -126,9 +125,9 @@ int write_uint_ascii(FILE *f, uint32_t x) {
   }
 }
 
-int write_double_ascii(FILE *f, double x) {
+int write_double_ascii(FILE *f, double x) {  // *f a pointer to the file f, where the double x will be written in the humanly readable ASCII format
     // Use fprintf to write the double to the file in ASCII format
-    if (fprintf(f, "%g", x) < 0) {
+    if (fprintf(f, "%g", x) < 0) { //%g best of both worlds;) fprintf already writes in ASCII fortunately
         return 1; // Write error
     }
     return 0; // Success
@@ -156,11 +155,11 @@ int write_uint_be(FILE *f, uint32_t x) {
 }
 
 
-int write_double_bin(FILE *f, double x) {
+int write_double_bin(FILE *f, double x) { //*f is a pointer to where the, 'x' the double will be written
     // Attempt to write 8 bytes from the double
-    if (fwrite(&x, sizeof(double), 1, f) != 1) {
-        return 1; // Write error
+    if (fwrite(&x, sizeof(double), 1, f) != 1) { // &x: the address of x(where it should write), sizeof(double): the size of each element in bytes(8), 1:the number of elements to write, f: the file where the double is written
+        return 1; // if no double is written it returns 1
     }
-    return 0; // Success
+    return 0; // if 1 double is written it returns 0 to indicate success.
 }
 
