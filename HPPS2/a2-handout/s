@@ -1,0 +1,5 @@
+# Create a binary file with big-endian unsigned 32-bit integers
+with open("test_be.bin", "wb") as f:
+    f.write((1).to_bytes(4, byteorder="big"))
+    f.write((256).to_bytes(4, byteorder="big"))
+    f.write((65536).to_bytes(4, byteorder="big"))
