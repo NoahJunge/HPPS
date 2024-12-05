@@ -45,11 +45,12 @@ int read_uint_ascii(FILE *f, uint32_t *out) {
   }
 }
 
+//chatgbt was used to check for edge cases and for verifying correct syntax
 int read_double_ascii(FILE *f, double *out) {//*f is a pointer to the file we wish to read from, *out is a pointer to the double variable, where the function will store the read double
     skipspaces(f); // Skips whitespace
 
     // Attempt to read a double using fscanf
-    int result = fscanf(f, "%lf", out);// reads input from the file f, %lf:only reads doubles, out is a pinter to where the location where the read double will be stored
+    int result = fscanf(f, "%lf", out);// reads input from the file f, %lf:only reads doubles, out is a ppinter to where the location where the read double will be stored
 
     if (result == EOF) {
         return EOF; // End of file
@@ -84,6 +85,7 @@ int read_uint_le(FILE *f, uint32_t *out) {
   return 0;
 }
 
+//code was based on read_uint_le() and syntax was checked using chatgbt
 int read_uint_be(FILE *f, uint32_t *out) {
     int b3, b2, b1, b0;
 
@@ -142,6 +144,7 @@ int write_uint_le(FILE *f, uint32_t x) {
   return 0;
 }
 
+//code was based on write_uint_le and developed using chatgbt
 int write_uint_be(FILE *f, uint32_t x) {
     // Write bytes in big-endian order
     if (fputc((x >> 24) & 0xFF, f) == EOF ||  // MSB
