@@ -45,7 +45,7 @@ int read_uint_ascii(FILE *f, uint32_t *out) {
   }
 }
 
-//chatgbt was used to check for edge cases and for verifying correct syntax
+//chatgbt was used for verifying correct syntax
 int read_double_ascii(FILE *f, double *out) {//*f is a pointer to the file we wish to read from, *out is a pointer to the double variable, where the function will store the read double
     skipspaces(f); // Skips whitespace
 
@@ -110,7 +110,7 @@ int read_uint_be(FILE *f, uint32_t *out) {
     return 0; // Success
 }
 
-
+// chatgbt was used to correctly handle error cases
 int read_double_bin(FILE *f, double *out) {// f is a pointer to the file to read from, out is a pointer to the address where we will store the read value
     // Attempt to read 8 bytes into the output double
     if (fread(out, sizeof(double), 1, f) != 1) { // out:stored data, sizeof(double): size of each element in bytes(8), 1: count of elements to be read, f: pointer to files stream, fread returns the number of elements succesfully read. If it doesnt read 1 it 

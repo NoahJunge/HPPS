@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 
-//the code was developed using chatgbt, to check for correct syntax
+//the code was developed using chatgbt, to check for correct syntax and to handle errors
 int main(void) {
     double value, sum = 0.0;//initializing values
     int count = 0;// -||-
