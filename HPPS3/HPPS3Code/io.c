@@ -6,17 +6,17 @@
 
 // Read points from a points data file.
 double* read_points(FILE *f, int *n_out, int *d_out) {
-    if (!f || !n_out || !d_out) {
+    if (!f || !n_out || !d_out) { // check if f, n_out, d_out are valid, eg. not Null
         return NULL;
     }
 
-    if (fread(n_out, sizeof(int32_t), 1, f) != 1 || 
-        fread(d_out, sizeof(int32_t), 1, f) != 1) {
+    if (fread(n_out, sizeof(int32_t), 1, f) != 1 || // checks if the starting ints are read(number of rows and coloums), if not return null
+        fread(d_out, sizeof(int32_t), 1, f) != 1) { // (fread, return 1 if succesfull)
         return NULL;
     }
 
-    int n = *n_out;
-    int d = *d_out;
+    int n = *n_out; // extract value from n_out: n number of rows
+    int d = *d_out; // extract value from d_out: d number of columns(dimensions)
 
     double *data = (double*)malloc(n * d * sizeof(double));
     if (!data) {
