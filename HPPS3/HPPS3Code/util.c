@@ -1,7 +1,7 @@
 #include "util.h"
 #include <math.h>
 #include <assert.h>
-#include <stdio.h> // Added for debugging
+#include <stdio.h>
 
 /**
  * Calculate the Euclidean distance between two points `x` and `y` in `d` dimensions.
@@ -13,9 +13,7 @@ double distance(int d, const double *x, const double *y) {
         double diff = x[i] - y[i]; // calculate the diff between the two points
         sum += diff * diff; //  square the diff AND add it to the sum 
     }
-    double result = sqrt(sum); //return the square root of the sum
-    printf("Distance calculated: %f\n", result); // Debugging
-    return result;
+    return sqrt(sum); //return the square root of the sum
 }
 
 /**
@@ -41,19 +39,18 @@ int insert_if_closer(int k, int d,
     for (int i = 0; i < k; i++) { // loop for while i <k
         if (closest[i] == -1) { // if Empty slot in array: 
             closest[i] = candidate;//then insert candidate
-            printf("Inserted candidate %d into empty slot\n", candidate); // Debugging
             return 1;
         }
         double dist = distance(d, query, &points[closest[i] * d]);// calculate the distance from the query point to each point in closest
         if (dist > farthest_dist) {// if the distance is smaller than the farthest point in closest
-            farthest_dist = dist; // then replace farthest dist with dist
+            farthest_dist = dist; // then replace farthest_dist with dist
             farthest_index = i; //  set the farthest index to i
         }
     }
 
+   
     if (candidate_dist < farthest_dist) {  // if candidate distance is closer than farthest dist
         closest[farthest_index] = candidate; // then replace 
-        printf("Replaced farthest index %d with candidate %d\n", farthest_index, candidate); // Debugging
         return 1; // return 1 for succes
     }
 
