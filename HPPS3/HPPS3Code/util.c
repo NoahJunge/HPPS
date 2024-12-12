@@ -5,15 +5,15 @@
 
 /**
  * Calculate the Euclidean distance between two points `x` and `y` in `d` dimensions.
- * Formula: √( ∑ (x[i] - y[i])² )
+ * Formula: sqrt( sum (x[i] - y[i])^2 )
  */
 double distance(int d, const double *x, const double *y) {
-    double sum = 0.0;
-    for (int i = 0; i < d; i++) {
-        double diff = x[i] - y[i];
-        sum += diff * diff;
+    double sum = 0.0; // initialize sum, to save the squared differences between the dimension of x and y
+    for (int i = 0; i < d; i++) { // a loop, starts at i=0, and ends when not(i<d). i increments for each 
+        double diff = x[i] - y[i]; // calculate the diff between the two points
+        sum += diff * diff; //  square the diff AND add it to the sum 
     }
-    return sqrt(sum);
+    return sqrt(sum); //return the square root of the sum
 }
 
 /**
@@ -31,28 +31,27 @@ double distance(int d, const double *x, const double *y) {
 int insert_if_closer(int k, int d,
                      const double *points, int *closest, const double *query,
                      int candidate) {
-    double candidate_dist = distance(d, query, &points[candidate * d]);
-    double farthest_dist = 0.0;
-    int farthest_index = -1;
+    double candidate_dist = distance(d, query, &points[candidate * d]);//calculate the distance between the query point and the candidate point
+    double farthest_dist = 0.0; // the greatest dist  curryently
+    int farthest_index = -1; // the index of the point with the gratest distance
 
     // Find the farthest point in `closest` or the first empty slot.
-    for (int i = 0; i < k; i++) {
-        if (closest[i] == -1) {
-            // Empty slot: insert candidate directly.
-            closest[i] = candidate;
+    for (int i = 0; i < k; i++) { // loop for while i <k
+        if (closest[i] == -1) { // if Empty slot in array: 
+            closest[i] = candidate;//then insert candidate
             return 1;
         }
-        double dist = distance(d, query, &points[closest[i] * d]);
-        if (dist > farthest_dist) {
-            farthest_dist = dist;
-            farthest_index = i;
+        double dist = distance(d, query, &points[closest[i] * d]);// calculate the distance from the query point to each point in closest
+        if (dist > farthest_dist) {// if the distance is smaller than the farthest point in closest
+            farthest_dist = dist; // then replace farthest dist with dist
+            farthest_index = i; //  set the farthest index to i
         }
     }
 
-    // Replace the farthest point if the candidate is closer.
-    if (candidate_dist < farthest_dist) {
-        closest[farthest_index] = candidate;
-        return 1;
+   
+    if (candidate_dist < farthest_dist) {  // if candidate distance is closer than farthest dist
+        closest[farthest_index] = candidate; // then replace 
+        return 1; // return 1 for succes
     }
 
     return 0; // Candidate is not closer than the farthest point.
