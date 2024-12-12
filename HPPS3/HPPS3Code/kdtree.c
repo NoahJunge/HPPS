@@ -1,11 +1,11 @@
 #include "kdtree.h"
-#include "sort.h"
 #include "util.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <assert.h>
 #include <math.h>
+#include <assert.h> // Include assert for assertion functionality
 
+// Private structures for internal use only
 struct node {
     int point_index;    // Index of this node's point in the 'indexes' array
     int axis;           // Axis along which this node is split
@@ -19,18 +19,21 @@ struct kdtree {
     struct node* root;  // Root of the k-d tree
 };
 
-// Helper function to compare two indices based on the points along a given axis
+// Sort context for quicksort
 struct sort_context {
     const double *points;
     int d;
     int axis;
 };
 
-int sort_on_axis(const void *a, const void *b, void *arg) {
-    struct sort_context *ctx = (struct sort_context *)arg;
-    const double *points = ctx->points;
-    int d = ctx->d;
-    int axis = ctx->axis;
+// Global context variable for sorting
+static struct sort_context global_sort_context;
+
+
+int sort_on_axis(const void *a, const void *b) {
+    const double *points = global_sort_context.points;
+    int d = global_sort_context.d;
+    int axis = global_sort_context.axis;
 
     int index_a = *(const int *)a;
     int index_b = *(const int *)b;
@@ -43,13 +46,15 @@ int sort_on_axis(const void *a, const void *b, void *arg) {
     return 0;
 }
 
-// Sort indices based on the given axis
 void sort_on_index(const double *points, int *indexes, int n, int d, int axis) {
-    struct sort_context ctx = { points, d, axis };
-    hpps_quicksort(indexes, n, sizeof(int), sort_on_axis, &ctx);
+    global_sort_context.points = points;
+    global_sort_context.d = d;
+    global_sort_context.axis = axis;
+
+    qsort(indexes, n, sizeof(int), sort_on_axis);
 }
 
-// Recursive function to create a k-d tree node
+// Recursive function to create k-d tree nodes
 struct node* kdtree_create_node(int d, const double *points, int depth, int n, int *indexes) {
     if (n <= 0) return NULL;
 
@@ -72,7 +77,6 @@ struct node* kdtree_create_node(int d, const double *points, int depth, int n, i
     return node;
 }
 
-// Create a k-d tree
 struct kdtree *kdtree_create(int d, int n, const double *points) {
     struct kdtree *tree = malloc(sizeof(struct kdtree));
     tree->d = d;
@@ -89,7 +93,6 @@ struct kdtree *kdtree_create(int d, int n, const double *points) {
     return tree;
 }
 
-// Free memory of a k-d tree node recursively
 void kdtree_free_node(struct node *node) {
     if (node == NULL) return;
 
@@ -98,13 +101,39 @@ void kdtree_free_node(struct node *node) {
     free(node);
 }
 
-// Free the entire k-d tree
 void kdtree_free(struct kdtree *tree) {
     if (tree == NULL) return;
 
     kdtree_free_node(tree->root);
     free(tree);
 }
+
+void kdtree_svg_node(double scale, FILE *f, const struct kdtree *tree,
+                     double x1, double y1, double x2, double y2,
+                     const struct node *node) {
+    if (node == NULL) return;
+
+    double coord = tree->points[node->point_index * 2 + node->axis];
+    if (node->axis == 0) {
+        // Vertical line splitting X axis
+        fprintf(f, "<line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\" stroke-width=\"1\" stroke=\"black\" />\n",
+                coord * scale, y1 * scale, coord * scale, y2 * scale);
+        kdtree_svg_node(scale, f, tree, x1, y1, coord, y2, node->left);
+        kdtree_svg_node(scale, f, tree, coord, y1, x2, y2, node->right);
+    } else {
+        // Horizontal line splitting Y axis
+        fprintf(f, "<line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\" stroke-width=\"1\" stroke=\"black\" />\n",
+                x1 * scale, coord * scale, x2 * scale, coord * scale);
+        kdtree_svg_node(scale, f, tree, x1, y1, x2, coord, node->left);
+        kdtree_svg_node(scale, f, tree, x1, coord, x2, y2, node->right);
+    }
+}
+
+void kdtree_svg(double scale, FILE* f, const struct kdtree *tree) {
+    assert(tree->d == 2); // Visualization is only for 2D spaces
+    kdtree_svg_node(scale, f, tree, 0, 0, 1, 1, tree->root);
+}
+
 
 // Recursive function to find k nearest neighbors in the k-d tree
 void kdtree_knn_node(const struct kdtree *tree, int k, const double* query,
@@ -133,7 +162,6 @@ void kdtree_knn_node(const struct kdtree *tree, int k, const double* query,
     }
 }
 
-// Wrapper function for k-NN search using the k-d tree
 int* kdtree_knn(const struct kdtree *tree, int k, const double* query) {
     int* closest = malloc(k * sizeof(int));
     double radius = INFINITY;
@@ -145,31 +173,4 @@ int* kdtree_knn(const struct kdtree *tree, int k, const double* query) {
     kdtree_knn_node(tree, k, query, closest, &radius, tree->root);
 
     return closest;
-}
-
-// Generate SVG visualization of the k-d tree
-void kdtree_svg_node(double scale, FILE *f, const struct kdtree *tree,
-                     double x1, double y1, double x2, double y2,
-                     const struct node *node) {
-    if (node == NULL) return;
-
-    double coord = tree->points[node->point_index * 2 + node->axis];
-    if (node->axis == 0) {
-        // Vertical line splitting X axis
-        fprintf(f, "<line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\" stroke-width=\"1\" stroke=\"black\" />\n",
-                coord * scale, y1 * scale, coord * scale, y2 * scale);
-        kdtree_svg_node(scale, f, tree, x1, y1, coord, y2, node->left);
-        kdtree_svg_node(scale, f, tree, coord, y1, x2, y2, node->right);
-    } else {
-        // Horizontal line splitting Y axis
-        fprintf(f, "<line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\" stroke-width=\"1\" stroke=\"black\" />\n",
-                x1 * scale, coord * scale, x2 * scale, coord * scale);
-        kdtree_svg_node(scale, f, tree, x1, y1, x2, coord, node->left);
-        kdtree_svg_node(scale, f, tree, x1, coord, x2, y2, node->right);
-    }
-}
-
-void kdtree_svg(double scale, FILE* f, const struct kdtree *tree) {
-    assert(tree->d == 2); // Visualization is only for 2D spaces
-    kdtree_svg_node(scale, f, tree, 0, 0, 1, 1, tree->root);
 }

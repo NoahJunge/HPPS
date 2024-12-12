@@ -17,6 +17,11 @@ double* read_points(FILE *f, int *n_out, int *d_out) {
 
     int n = *n_out; // extract value from n_out: n number of rows
     int d = *d_out; // extract value from d_out: d number of columns(dimensions)
+    if (!n || !d){
+        return NULL;
+    }
+
+    printf("Reading %d points with %d dimensions\n", n, d); // Debugging
 
     double *data = (double*)malloc(n * d * sizeof(double)); // allocate memory to hold n*d doubles, meaning an array
     if (!data) { // if no data, then failure
@@ -25,14 +30,12 @@ double* read_points(FILE *f, int *n_out, int *d_out) {
 
     if (fread(data, sizeof(double), n * d, f) != (size_t)(n * d)) {// save n*d doubles to data from the file f
         free(data); // fread  returns the number of correctly read doubles, it this isnt n*d, then free up the space at data again.
-        return NULL; /
+        return NULL; 
     }
 
+    printf("Successfully read points from file\n"); // Debugging
     return data;
 }
-
-
-
 
 // Read indexes from an indexes data file.
 //for explanation of each line of code, please look at the function above, which is quite similar
@@ -48,6 +51,12 @@ int* read_indexes(FILE *f, int *n_out, int *k_out) {
 
     int n = *n_out;
     int k = *k_out;
+    if (!n || !k){
+        return NULL;
+    }
+
+
+    printf("Reading %d queries with %d neighbors each\n", n, k); // Debugging
 
     int *data = (int*)malloc(n * k * sizeof(int));
     if (!data) {
@@ -59,13 +68,9 @@ int* read_indexes(FILE *f, int *n_out, int *k_out) {
         return NULL;
     }
 
+    printf("Successfully read indexes from file\n"); // Debugging
     return data;
 }
-
-
-
-
-
 // Write a points data file.
 int write_points(FILE *f, int32_t n, int32_t d, double *data) {
     if (!f || !data) { // if the file, or the data, isnt valid then
@@ -81,12 +86,9 @@ int write_points(FILE *f, int32_t n, int32_t d, double *data) {
         return 1; // if not then return error code 1
     }
 
-    return 0; // return 0 for succes
+    printf("Successfully wrote points to file\n"); // Debugging
+    return 0; // return 0 for success
 }
-
-
-
-
 
 // Write an indexes data file.
 int write_indexes(FILE *f, int32_t n, int32_t k, int *data) {
@@ -94,14 +96,15 @@ int write_indexes(FILE *f, int32_t n, int32_t k, int *data) {
         return 1; // if not, return error code 1
     }
 
-    if (fwrite(&n, sizeof(int32_t), 1, f) != 1 || // writes n to  file f
-        fwrite(&k, sizeof(int32_t), 1, f) != 1) { //write k to file f
+    if (fwrite(&n, sizeof(int32_t), 1, f) != 1 || // writes n to file f
+        fwrite(&k, sizeof(int32_t), 1, f) != 1) { // writes k to file f
         return 1; // if not, return error code 1
     }
 
-    if (fwrite(data, sizeof(int), n * k, f) != (size_t)(n * k)) {// writes n*k datapoints to file f
-        return 1; // if not return error code 1
+    if (fwrite(data, sizeof(int), n * k, f) != (size_t)(n * k)) { // writes n*k integers to file f
+        return 1; // if not, return error code 1
     }
 
+    printf("Successfully wrote indexes to file\n"); // Debugging
     return 0; // return 0 for success
 }
