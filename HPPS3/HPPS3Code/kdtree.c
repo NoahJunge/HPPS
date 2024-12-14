@@ -77,20 +77,22 @@ struct node* kdtree_create_node(int d, const double *points, int depth, int n, i
 }
 
 // Create a k-d tree
+//d:dimensions, n:datapoints, points: pointer to points array
 struct kdtree *kdtree_create(int d, int n, const double *points) {
-    struct kdtree *tree = malloc(sizeof(struct kdtree));
-    tree->d = d;
-    tree->points = points;
+    struct kdtree *tree = malloc(sizeof(struct kdtree));// allocate memory for the tree structure
+    tree->d = d; // access d in the tree structure
+    tree->points = points; // access points in the tree structue
 
-    int *indexes = malloc(sizeof(int) * n);
-    for (int i = 0; i < n; i++) {
-        indexes[i] = i;
+    int *indexes = malloc(sizeof(int) * n); // allocate memory for an array of size n
+    for (int i = 0; i < n; i++) { // initialise the indexes array, so that it has the values 0,1,2,3,4,...,n-1.  (less than n)
+        indexes[i] = i;// -||-
     }
 
+    // access the root from the tree structure, and build the tree recursively using the function below
     tree->root = kdtree_create_node(d, points, 0, n, indexes);
-    free(indexes);
+    free(indexes); // free memory after creating the tree.
 
-    return tree;
+    return tree; //return the finished tree structure
 }
 
 // Free a k-d tree node
@@ -134,16 +136,18 @@ void kdtree_knn_node(const struct kdtree *tree, int k, const double* query,
 }
 
 // Find k nearest neighbors in the k-d tree
+//tree: the kdtree, k: the amount of neighbours we are searching for, q: the point for which we are looking for neighbours.
 int* kdtree_knn(const struct kdtree *tree, int k, const double* query) {
-    int *closest = malloc(k * sizeof(int));
-    double radius = INFINITY;
+    int *closest = malloc(k * sizeof(int));// an array that will store the k nearest neighbours
+    double radius = INFINITY;// the distance to the furthest point in the closest array, initialize to infinity because no points have been found yet
 
     for (int i = 0; i < k; i++) {
         closest[i] = -1; // Initialize closest array with invalid indices
     }
-
+    // the function that performs the actual search through the kdtree to find the nearest neighbours
     kdtree_knn_node(tree, k, query, closest, &radius, tree->root);
 
+    //returns an array of the closest points(their indices)
     return closest;
 }
 
