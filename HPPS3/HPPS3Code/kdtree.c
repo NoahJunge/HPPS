@@ -6,6 +6,9 @@
 #include <assert.h>
 #include <math.h>
 
+//chatgbt was used to get a better understanding of the syntax of the helper functions
+//it was also used during debugging to help verify the correctness of the code.
+
 // Structure to represent a k-d tree node
 struct node {
     int point_index;  // Index of this node's point in the corresponding 'indexes' array

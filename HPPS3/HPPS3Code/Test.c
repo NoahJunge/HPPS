@@ -7,6 +7,9 @@
 #include <stdint.h>
 #include <math.h>
 
+//this test file was developed using chatGbt
+
+
 // Helper function to print points
 void print_points(double *data, int n, int d) {
     for (int i = 0; i < n; i++) {

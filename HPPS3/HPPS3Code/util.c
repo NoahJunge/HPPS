@@ -3,6 +3,9 @@
 #include <assert.h>
 #include <stdio.h>
 
+
+
+
 /**
  * Calculate the Euclidean distance between two points `x` and `y` in `d` dimensions.
  * Formula: sqrt( sum (x[i] - y[i])^2 )
@@ -15,6 +18,9 @@ double distance(int d, const double *x, const double *y) {
     }
     return sqrt(sum); // Return the square root of the sum
 }
+
+
+//chatgbt was used to very syntax and for debugging purposes
 
 /**
  * Insert a candidate point into the array of k closest points if it is closer
@@ -91,4 +97,3 @@ int insert_if_closer(int k, int d,
     printf("Candidate %d not closer than the farthest point\n", candidate);
     return 0; // Candidate is not closer than the farthest point
 }
-

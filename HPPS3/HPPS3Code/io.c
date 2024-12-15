@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <assert.h>
 
+//chatgbt was used to verify syntax and for debugging purposes
+
 // Read points from a points data file.
 double* read_points(FILE *f, int *n_out, int *d_out) {
     if (!f || !n_out || !d_out) { // check if f, n_out, d_out are valid, eg. not Null
