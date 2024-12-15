@@ -121,8 +121,13 @@ void kdtree_knn_node(const struct kdtree *tree, int k, const double* query,
     double dist = distance(tree->d, query, point);
 
     if (insert_if_closer(k, tree->d, tree->points, closest, query, node->point_index)) {
-        *radius = distance(tree->d, query, &tree->points[closest[k - 1] * tree->d]);
+        // Update radius only when all slots are filled
+        if (closest[k - 1] != -1) {
+            *radius = distance(tree->d, query, &tree->points[closest[k - 1] * tree->d]);
+        }
     }
+
+
 
     double diff = query[node->axis] - point[node->axis];
     struct node *first = diff < 0 ? node->left : node->right;
@@ -130,9 +135,10 @@ void kdtree_knn_node(const struct kdtree *tree, int k, const double* query,
 
     kdtree_knn_node(tree, k, query, closest, radius, first);
 
-    if (fabs(diff) < *radius) {
-        kdtree_knn_node(tree, k, query, closest, radius, second);
-    }
+    if (fabs(diff) < *radius || closest[k - 1] == -1) {  // Ensure we continue searching if closest is not full
+    kdtree_knn_node(tree, k, query, closest, radius, second);
+}
+
 }
 
 // Find k nearest neighbors in the k-d tree

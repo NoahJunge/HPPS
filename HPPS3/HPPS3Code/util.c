@@ -8,12 +8,12 @@
  * Formula: sqrt( sum (x[i] - y[i])^2 )
  */
 double distance(int d, const double *x, const double *y) {
-    double sum = 0.0; // initialize sum, to save the squared differences between the dimension of x and y
-    for (int i = 0; i < d; i++) { // a loop, starts at i=0, and ends when not(i<d). i increments for each 
-        double diff = x[i] - y[i]; // calculate the diff between the two points
-        sum += diff * diff; //  square the diff AND add it to the sum 
+    double sum = 0.0; // Initialize sum, to save the squared differences between the dimension of x and y
+    for (int i = 0; i < d; i++) { // Loop over each dimension
+        double diff = x[i] - y[i]; // Calculate the difference between the two points
+        sum += diff * diff; // Square the difference and add to the sum
     }
-    return sqrt(sum); //return the square root of the sum
+    return sqrt(sum); // Return the square root of the sum
 }
 
 /**
@@ -31,28 +31,64 @@ double distance(int d, const double *x, const double *y) {
 int insert_if_closer(int k, int d,
                      const double *points, int *closest, const double *query,
                      int candidate) {
-    double candidate_dist = distance(d, query, &points[candidate * d]);//calculate the distance between the query point and the candidate point
-    double farthest_dist = 0.0; // the greatest dist  curryently
-    int farthest_index = -1; // the index of the point with the gratest distance
+    double candidate_dist = distance(d, query, &points[candidate * d]); // Distance to candidate
+    double farthest_dist = 0.0;  // Distance to the current farthest point in 'closest'
+    int farthest_index = -1;     // Index of the farthest point
+
+    printf("Candidate %d, Distance: %f\n", candidate, candidate_dist);
 
     // Find the farthest point in `closest` or the first empty slot.
-    for (int i = 0; i < k; i++) { // loop for while i <k
-        if (closest[i] == -1) { // if Empty slot in array: 
-            closest[i] = candidate;//then insert candidate
+    for (int i = 0; i < k; i++) {
+        if (closest[i] == -1) { // If an empty slot is found
+            printf("Empty slot at %d, inserting candidate %d\n", i, candidate);
+            closest[i] = candidate;
+            
+            // Sort the array after adding the new candidate
+            for (int m = 0; m < k - 1; m++) {
+                for (int n = m + 1; n < k && closest[n] != -1; n++) {
+                    double dist_m = distance(d, query, &points[closest[m] * d]);
+                    double dist_n = distance(d, query, &points[closest[n] * d]);
+                    if (dist_m > dist_n) {
+                        int temp = closest[m];
+                        closest[m] = closest[n];
+                        closest[n] = temp;
+                    }
+                }
+            }
             return 1;
         }
-        double dist = distance(d, query, &points[closest[i] * d]);// calculate the distance from the query point to each point in closest
-        if (dist > farthest_dist) {// if the distance is smaller than the farthest point in closest
-            farthest_dist = dist; // then replace farthest_dist with dist
-            farthest_index = i; //  set the farthest index to i
+
+        double dist = distance(d, query, &points[closest[i] * d]);
+        printf("Checking closest[%d] = %d, Distance: %f\n", i, closest[i], dist);
+
+        if (dist > farthest_dist) { // Track the farthest point
+            farthest_dist = dist;
+            farthest_index = i;
         }
     }
 
-   
-    if (candidate_dist < farthest_dist) {  // if candidate distance is closer than farthest dist
-        closest[farthest_index] = candidate; // then replace 
-        return 1; // return 1 for succes
+    // Replace the farthest point if the candidate is closer
+    if (candidate_dist < farthest_dist) {
+        printf("Replacing farthest point %d (Distance: %f) with candidate %d\n",
+               closest[farthest_index], farthest_dist, candidate);
+        closest[farthest_index] = candidate;
+
+        // Sort the array after replacing the farthest point
+        for (int m = 0; m < k - 1; m++) {
+            for (int n = m + 1; n < k && closest[n] != -1; n++) {
+                double dist_m = distance(d, query, &points[closest[m] * d]);
+                double dist_n = distance(d, query, &points[closest[n] * d]);
+                if (dist_m > dist_n) {
+                    int temp = closest[m];
+                    closest[m] = closest[n];
+                    closest[n] = temp;
+                }
+            }
+        }
+        return 1;
     }
 
-    return 0; // Candidate is not closer than the farthest point.
+    printf("Candidate %d not closer than the farthest point\n", candidate);
+    return 0; // Candidate is not closer than the farthest point
 }
+
