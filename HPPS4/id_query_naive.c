@@ -15,6 +15,9 @@ struct naive_data {
     int n;             // Number of records
 };
 
+//the functions were developed using chatgbt, which was also used to verify correctness and syntax of the code
+
+
 // Function to create and initialize the naive_data structure
 // Input: Array of records (rs) and the number of records (n)
 // Output: Pointer to initialized naive_data structure

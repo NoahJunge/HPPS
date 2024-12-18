@@ -8,6 +8,8 @@
 
 #include "coord_query.h"
 #include "record.h"
+//this program was developed using chatgbt to verify syntax, and maintain simplicity.
+
 
 // Structure to hold the dataset for naive querying
 struct naive_data {

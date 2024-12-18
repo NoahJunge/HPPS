@@ -8,6 +8,10 @@
 #include "record.h"
 #include "id_query.h"
 
+//the functions in this program are mostly based on the functions in id_query_indexed.c.
+//chatgbt was used to develop,verify syntax, and for handling errors
+
+
 // Structure to store an index record: holds ID and a pointer to the record
 struct index_record {
     int64_t osm_id;            // Record ID
