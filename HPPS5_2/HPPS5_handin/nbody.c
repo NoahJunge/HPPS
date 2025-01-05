@@ -7,11 +7,13 @@
 
 static const double WARNING_DISTANCE = 0.01;
 
+
+//This function was developed using ChatGbt.
 // Naive n-body simulation (parallelized with OpenMP).
 //
 // *tc must be set to the number of warnings.
 // *ts must point to an array of warnings with at least *tc elements.
-void nbody(int n, struct particle *ps, int steps, int* tc, struct warning** ts) { /////////////////æmdret
+void nbody(int n, struct particle *ps, int steps, int* tc, struct warning** ts) {
   for (int s = 0; s < steps; s++) {
     // Compute forces and update velocities
     #pragma omp parallel for
@@ -39,9 +41,9 @@ void nbody(int n, struct particle *ps, int steps, int* tc, struct warning** ts) 
       ps[i].pos.y += ps[i].vel.y;
       ps[i].pos.z += ps[i].vel.z;
 
-      double distance = dist_centre(ps[i].pos);// calculates the distance from the current particle to the center
-      if (distance < WARNING_DISTANCE) { // if the particle distance is belov warning distance then
-        #pragma omp critical// only one thread at a time
+      double distance = dist_centre(ps[i].pos);
+      if (distance < WARNING_DISTANCE) {
+        #pragma omp critical
         {
           (*tc)++; // Increase warning count
           *ts = realloc(*ts, (*tc) * sizeof(struct warning)); // Resize array

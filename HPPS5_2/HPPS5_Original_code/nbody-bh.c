@@ -49,6 +49,7 @@ struct bh_node {
   struct bh_node* children[8]; // Children of internal nodes
 };
 
+//This function was developed using chatGbt
 // Convert an external node to an internal one
 void bh_mk_internal(struct bh_node* bh) {
     assert(!bh->internal);  // Ensures the node is external
@@ -75,6 +76,7 @@ void bh_mk_internal(struct bh_node* bh) {
     }
 }
 
+//This function was developed using ChatGbt
 // Insert a particle into the octree
 void bh_insert(struct bh_node* bh, struct particle* ps, int p) {
     if (bh->internal) {
@@ -105,6 +107,7 @@ void bh_insert(struct bh_node* bh, struct particle* ps, int p) {
     }
 }
 
+//This function was developed using chatGbt
 // Free all memory used for the tree (recursive)
 void bh_free(struct bh_node* bh) {
     if (bh->internal) {
@@ -115,6 +118,7 @@ void bh_free(struct bh_node* bh) {
     }
 }
 
+//This Function was developed using ChatGbt
 // Compute the acceleration on a particle due to the tree structure
 void bh_accel(double theta, struct bh_node* bh, struct particle* ps, int p, struct vec3 *a) {
     if (bh->internal) {
@@ -142,6 +146,7 @@ void bh_accel(double theta, struct bh_node* bh, struct particle* ps, int p, stru
     }
 }
 
+//This function was developed using ChatGbt
 // Create a new octree node spanning the given space
 struct bh_node* bh_new(double min_coord, double max_coord) {
     struct bh_node* bh = malloc(sizeof(struct bh_node));
@@ -165,6 +170,7 @@ struct bh_node* bh_new(double min_coord, double max_coord) {
 
 static const double WARNING_DISTANCE = 0.01;
 
+//This function was modified using ChatGbt
 // Barnes-Hut N-body simulation function
 void nbody(int n, struct particle *ps, int steps, int* tc, struct warning** ts, double theta) {
     for (int s = 0; s < steps; s++) {

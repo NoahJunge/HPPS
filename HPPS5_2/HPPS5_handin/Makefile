@@ -11,7 +11,7 @@ clean:
 	rm -f $(PROGRAMS) *.o
 
 %: %.o util.o
-	$(CC) -o $@ $*.o util.o $(CFLAGS) -lm
+	$(CC) -o $@ $*.o util.o $(CFLAGS) -lm  # Add -lm to the linking step
 
 %.o: %.c
 	$(CC) -c $< $(CFLAGS) $(DEBUG) $(OPENMP)

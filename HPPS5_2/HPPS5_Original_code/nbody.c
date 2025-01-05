@@ -7,6 +7,8 @@
 
 static const double WARNING_DISTANCE = 0.01;
 
+
+//This function was developed using ChatGbt.
 // Naive n-body simulation (parallelized with OpenMP).
 //
 // *tc must be set to the number of warnings.
